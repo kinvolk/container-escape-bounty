@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "eu-central-1"
+  region = "${var.aws_region}"
 }
 
 data "aws_ami" "ubuntu" {
@@ -20,14 +20,14 @@ data "aws_ami" "ubuntu" {
 
 resource "aws_instance" "bountybox" {
   ami           = "${data.aws_ami.ubuntu.id}"
-  instance_type = "t2.micro"
+  instance_type = "${var.instance_type}"
   key_name      = "${var.key_pair_name}"
 
   vpc_security_group_ids = ["${aws_security_group.bountybox.id}"]
   subnet_id = "${aws_subnet.bountybox.id}"
 
   tags = {
-    Name = "BountyBox"
+    Name = "${var.instance_name}"
   }
 }
 
