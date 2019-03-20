@@ -2,6 +2,22 @@ provider "aws" {
   region = "${var.aws_region}"
 }
 
+data "aws_ami" "flatcar" {
+  most_recent = true
+
+  filter {
+    name   = "name"
+    values = ["Flatcar-stable-*-hvm"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+
+  owners = ["075585003325"] # Flatcar
+}
+
 data "aws_ami" "ubuntu" {
   most_recent = true
 
@@ -19,7 +35,7 @@ data "aws_ami" "ubuntu" {
 }
 
 resource "aws_instance" "bountybox" {
-  ami           = "${data.aws_ami.ubuntu.id}"
+  ami           = "${var.distro == "flatcar" ? data.aws_ami.flatcar.id : data.aws_ami.ubuntu.id}"
   instance_type = "${var.instance_type}"
   key_name      = "${var.key_pair_name}"
 

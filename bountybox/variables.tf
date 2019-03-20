@@ -4,6 +4,12 @@ variable "aws_region" {
   default     = "eu-central-1"
 }
 
+variable "distro" {
+  type        = "string"
+  description = "Linux Distro to be installed"
+  default     = "ubuntu"
+}
+
 variable "instance_name" {
   type        = "string"
   description = "Name of the AWS instance"
@@ -21,3 +27,9 @@ variable "key_pair_name" {
   description = "SSH public key"
 }
 
+variable "distro_user_name" {
+  default = {
+    "flatcar" = "core"
+    "ubuntu"  = "ubuntu"
+  }
+}
