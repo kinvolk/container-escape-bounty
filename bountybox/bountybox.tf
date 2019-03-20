@@ -42,6 +42,8 @@ resource "aws_instance" "bountybox" {
   vpc_security_group_ids = ["${aws_security_group.bountybox.id}"]
   subnet_id = "${aws_subnet.bountybox.id}"
 
+  user_data = "${file("${var.distro}/setup-docker.sh")}"
+
   tags = {
     Name = "${var.instance_name}"
   }
