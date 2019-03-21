@@ -3,14 +3,30 @@
 ## How to try
 
 Manual preparation:
-- Install a key pair in the AWS console in the `eu-central-1` (Frankfurt) region.
+- Get a key pair's name from the AWS console. Let's say its name is `testkey`.
 
-
-Run terraform:
+Prepare `terraform.tfvars` from its template file.
 
 ```
 cd bountybox
-cp terraform.tfvars.template terraform.tfvars
-vim terraform.tfvars
+cp terraform.tfvars.tmpl terraform.tfvars
+```
+
+Customize `terraform.tfvars` if needed. For example:
+
+```
+sed -i 's,key_pair_name = "keyname",key_pair_name = "testkey",' terraform.tfvars
+```
+
+Run terraform to create AWS instances:
+
+```
+terraform init
 terraform apply
+```
+
+To clean up the AWS resources:
+
+```
+terraform destroy
 ```
