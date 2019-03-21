@@ -34,6 +34,27 @@ data "aws_ami" "ubuntu" {
   owners = ["099720109477"] # Canonical
 }
 
+data "template_file" "script" {
+  template = "${file("${var.distro}/setup-docker.sh")}"
+}
+
+data "template_file" "systemd" {
+  template = "${file("${var.distro}/docker.yaml")}"
+}
+
+data "template_cloudinit_config" "config" {
+  part {
+    filename     = "setup-docker.sh"
+    content_type = "text/x-shellscript"
+    content      = "${data.template_file.script.rendered}"
+  }
+
+  part {
+    content_type = "text/cloud-config"
+    content      = "${data.template_file.systemd.rendered}"
+  }
+}
+
 resource "aws_instance" "bountybox" {
   ami           = "${var.distro == "flatcar" ? data.aws_ami.flatcar.id : data.aws_ami.ubuntu.id}"
   instance_type = "${var.instance_type}"
@@ -42,7 +63,7 @@ resource "aws_instance" "bountybox" {
   vpc_security_group_ids = ["${aws_security_group.bountybox.id}"]
   subnet_id = "${aws_subnet.bountybox.id}"
 
-  user_data = "${file("${var.distro}/setup-docker.sh")}"
+  user_data = "${data.template_cloudinit_config.config.rendered}"
 
   tags = {
     Name = "${var.instance_name}"
