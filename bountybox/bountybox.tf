@@ -2,6 +2,7 @@ provider "aws" {
   region = "${var.aws_region}"
 }
 
+# Flatcar Linux - https://www.flatcar-linux.org/
 data "aws_ami" "flatcar" {
   most_recent = true
 
@@ -15,7 +16,7 @@ data "aws_ami" "flatcar" {
     values = ["hvm"]
   }
 
-  owners = ["075585003325"] # Flatcar
+  owners = ["075585003325"]
 }
 
 data "aws_ami" "ubuntu" {
