@@ -4,6 +4,10 @@ resource "aws_vpc" "bountybox" {
   cidr_block           = "10.0.0.0/16"
   enable_dns_hostnames = true
   enable_dns_support   = true
+
+  tags = {
+    Name = "${var.instance_name}"
+  }
 }
 
 resource "aws_subnet" "bountybox" {
@@ -11,20 +15,24 @@ resource "aws_subnet" "bountybox" {
   cidr_block = "10.0.0.0/24"
 
   tags = {
-    Name = "bountybox"
+    Name = "${var.instance_name}"
   }
 }
 
 resource "aws_eip" "ip-bountybox" {
   instance = "${aws_instance.bountybox.id}"
   vpc      = true
+
+  tags = {
+    Name = "${var.instance_name}"
+  }
 }
 
 resource "aws_internet_gateway" "bountybox" {
   vpc_id = "${aws_vpc.bountybox.id}"
 
   tags = {
-    Name = "bountybox"
+    Name = "${var.instance_name}"
   }
 }
 
@@ -34,6 +42,10 @@ resource "aws_route_table" "bountybox" {
   route {
     cidr_block = "0.0.0.0/0"
     gateway_id = "${aws_internet_gateway.bountybox.id}"
+  }
+
+  tags = {
+    Name = "${var.instance_name}"
   }
 }
 
