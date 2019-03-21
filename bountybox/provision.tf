@@ -1,4 +1,4 @@
-resource "null_resource" "setup-docker" {
+resource "null_resource" "setup-cloudinit" {
   connection {
     type = "ssh"
     host = "${aws_eip.ip-bountybox.public_ip}"

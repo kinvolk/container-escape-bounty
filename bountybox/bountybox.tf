@@ -34,21 +34,11 @@ data "aws_ami" "ubuntu" {
   owners = ["099720109477"] # Canonical
 }
 
-data "template_file" "script" {
-  template = "${file("${var.distro}/setup-docker.sh")}"
-}
-
 data "template_file" "systemd" {
-  template = "${file("${var.distro}/docker.yaml")}"
+  template = "${file("${var.distro}/cloudinit.yaml")}"
 }
 
 data "template_cloudinit_config" "config" {
-  part {
-    filename     = "setup-docker.sh"
-    content_type = "text/x-shellscript"
-    content      = "${data.template_file.script.rendered}"
-  }
-
   part {
     content_type = "text/cloud-config"
     content      = "${data.template_file.systemd.rendered}"

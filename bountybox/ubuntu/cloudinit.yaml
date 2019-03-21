@@ -24,6 +24,20 @@ write_files:
       
       [Install]
       WantedBy=multi-user.target
+packages:
+  - apt-transport-https
+  - ca-certificates
+  - curl
+  - git
+  - gnupg-agent
+  - golang
+  - iptables
+  - software-properties-common
+  - systemd
 runcmd:
-  - [systemctl, daemon-reload]
-  - [systemctl, restart, docker.service]
+  - apt-key adv --recv-keys 0EBFCD88
+  - add-apt-repository "deb https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+  - apt-get -y install docker-ce docker-ce-cli containerd.io
+  - usermod -aG docker ubuntu
+  - systemctl start docker.service
+  - systemctl enable docker.service
