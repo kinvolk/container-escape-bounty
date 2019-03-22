@@ -24,6 +24,33 @@ write_files:
       
       [Install]
       WantedBy=multi-user.target
+  - path: /etc/systemd/system/contained.service
+    content: |
+      [Unit]
+      After=docker.service containerd.service
+      Wants=docker.service
+      
+      [Service]
+      Type=simple
+      ExecStart=/tmp/setup-contained.af.sh
+      TimeoutSec=infinity
+      RemainAfterExit=yes
+      
+      [Install]
+      WantedBy=multi-user.target
+  - path: /tmp/setup-contained.af.sh
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+      
+      sudo -u ubuntu /bin/bash -c " \
+        go get -u -v github.com/kinvolk/contained.af; \
+        cd /home/ubuntu/go/src/github.com/kinvolk/contained.af; \
+        git checkout dongsu/kinvolk-demo; \
+        make dev; \
+        make dind; \
+        make run; \
+      "
 packages:
   - apt-transport-https
   - ca-certificates
@@ -41,3 +68,5 @@ runcmd:
   - usermod -aG docker ubuntu
   - systemctl start docker.service
   - systemctl enable docker.service
+  - systemctl start contained.service
+  - systemctl enable contained.service
