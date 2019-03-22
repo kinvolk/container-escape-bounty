@@ -1,0 +1,43 @@
+#cloud-config
+write_files:
+  - path: /etc/systemd/system/docker.service
+    content: |
+      [Unit]
+      BindsTo=containerd.service
+      After=network-online.target firewalld.service containerd.service
+      Wants=network-online.target
+      Requires=docker.socket
+      
+      [Service]
+      Type=notify
+      ExecStart=/usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock --storage-driver=overlay2
+      ExecReload=/bin/kill -s HUP $MAINPID
+      TimeoutSec=0
+      RestartSec=2
+      Restart=always
+      LimitNOFILE=infinity
+      LimitNPROC=infinity
+      LimitCORE=infinity
+      TasksMax=infinity
+      Delegate=yes
+      KillMode=process
+      
+      [Install]
+      WantedBy=multi-user.target
+packages:
+  - apt-transport-https
+  - ca-certificates
+  - curl
+  - git
+  - gnupg-agent
+  - golang
+  - iptables
+  - software-properties-common
+  - systemd
+runcmd:
+  - apt-key adv --recv-keys 0EBFCD88
+  - add-apt-repository "deb https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+  - apt-get -y install docker-ce docker-ce-cli containerd.io
+  - usermod -aG docker ubuntu
+  - systemctl start docker.service
+  - systemctl enable docker.service
