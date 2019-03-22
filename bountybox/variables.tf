@@ -10,6 +10,16 @@ variable "distro" {
   default     = "ubuntu"
 }
 
+variable "dns_zone" {
+  type        = "string"
+  description = "AWS Route53 DNS Zone (e.g. aws.example.com)"
+}
+
+variable "dns_zone_id" {
+  type        = "string"
+  description = "AWS Route53 DNS Zone ID (e.g. 0123456789ABCD)"
+}
+
 variable "instance_name" {
   type        = "string"
   description = "Name of the AWS instance (e.g. BountyBox)"

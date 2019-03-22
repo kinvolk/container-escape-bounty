@@ -106,3 +106,11 @@ resource "aws_security_group_rule" "allow_egress" {
 
   security_group_id = "${aws_security_group.bountybox.id}"
 }
+
+resource "aws_route53_record" "bountybox" {
+  zone_id = "${var.dns_zone_id}"
+  name    = "${var.instance_name}.${var.dns_zone}"
+  type    = "A"
+  ttl     = "300"
+  records  = ["${aws_eip.ip-bountybox.public_ip}"]
+}
