@@ -77,7 +77,7 @@ write_files:
       
       sudo -u ubuntu /bin/bash -c " \
         go get -u -v github.com/kinvolk/contained.af; \
-        cd /home/ubuntu/go/src/github.com/kinvolk/contained.af; \
+        cd ${local_git_repo}; \
         git checkout dongsu/kinvolk-demo; \
         make dev; \
         make dind; \

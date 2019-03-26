@@ -39,15 +39,21 @@ data "template_file" "systemd" {
   template = "${file("${var.distro}/cloudinit.yaml.tmpl")}"
 
   vars = {
-    domain = "${var.instance_name}.${var.dns_zone}"
+    domain         = "${var.instance_name}.${var.dns_zone}"
+    local_git_repo = "${var.distro == "flatcar" ? "/home/core/go/src/github.com/kinvolk/contained.af" : "/home/ubuntu/go/src/github.com/kinvolk/contained.af"}"
   }
 }
 
-data "template_cloudinit_config" "config" {
+data "template_cloudinit_config" "ubuntu" {
   part {
     content_type = "text/cloud-config"
     content      = "${data.template_file.systemd.rendered}"
   }
+}
+
+data "ct_config" "flatcar" {
+  content      = "${data.template_file.systemd.rendered}"
+  pretty_print = false
 }
 
 resource "aws_instance" "bountybox" {
@@ -58,7 +64,7 @@ resource "aws_instance" "bountybox" {
   vpc_security_group_ids = ["${aws_security_group.bountybox.id}"]
   subnet_id = "${aws_subnet.bountybox.id}"
 
-  user_data = "${data.template_cloudinit_config.config.rendered}"
+  user_data = "${var.distro == "flatcar" ? data.ct_config.flatcar.rendered: data.template_cloudinit_config.ubuntu.rendered}"
 
   tags = {
     Name = "${var.instance_name}"

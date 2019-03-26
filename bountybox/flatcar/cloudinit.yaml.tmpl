@@ -1,0 +1,139 @@
+---
+systemd:
+  units:
+    - name: contained-setup.service
+      enable: true
+      contents: |
+        [Unit]
+        Before=contained.service
+        After=network-online.target
+        Wants=network-online.target
+        
+        [Service]
+        Type=simple
+        ExecStartPre=/usr/bin/mkdir -p /opt/bin
+        ExecStart=/opt/bin/setup-contained.af.sh
+        TimeoutSec=infinity
+        RemainAfterExit=yes
+        
+        [Install]
+        WantedBy=multi-user.target
+    - name: contained.service
+      enable: true
+      contents: |
+        [Unit]
+        After=contained-setup docker.service
+        Wants=contained-setup docker.service
+        
+        [Service]
+        Type=simple
+        ExecStart=/opt/bin/run-contained.af.sh
+        TimeoutSec=infinity
+        RestartSec=5
+        Restart=always
+        RemainAfterExit=yes
+        WorkingDirectory=${local_git_repo}
+        
+        [Install]
+        WantedBy=multi-user.target
+    - name: caddy.service
+      enable: true
+      contents: |
+        [Unit]
+        After=network-online.target
+        Wants=network-online.target
+        
+        [Service]
+        Type=simple
+        RestartSec=10
+        Restart=always
+        LimitNOFILE=32768
+        LimitNPROC=512
+        TimeoutStartSec=300
+        ExecStartPre=/usr/bin/mkdir -p /var/www/${domain}
+        ExecStartPre=/usr/bin/chown -R core /var/www/${domain}
+        ExecStartPre=-/usr/bin/rkt rm --uuid-file=/var/lib/caddy-pod-uuid
+        ExecStart=/usr/bin/rkt run \
+        --uuid-file-save=/var/lib/caddy-pod-uuid \
+        --insecure-options=image \
+        --net=host \
+        --dns=host \
+        --volume caddy-dir,kind=host,source=/etc/caddy --mount volume=caddy-dir,target=/etc/caddy \
+        --volume builds-developer-dir,kind=host,source=/var/www/${domain} --mount volume=builds-developer-dir,target=${domain} \
+        --volume caddy-file,kind=host,source=/etc/caddy/Caddyfile --mount volume=caddy-file,target=/etc/Caddyfile \
+        docker://schu/caddy:0.11.0 \
+        --environment=CADDYPATH=/etc/caddy
+        ExecStop=/usr/bin/rkt stop --uuid-file=/var/lib/caddy-pod-uuid
+        ExecReload=/bin/kill -USR1 $MAINPID
+        
+        [Install]
+        WantedBy=multi-user.target
+    - name: docker.service
+      enable: true
+      contents: |
+        [Unit]
+        BindsTo=containerd.service
+        After=network-online.target containerd.service contained-setup.service
+        Wants=network-online.target contained-setup.service
+        Requires=docker.socket
+        
+        [Service]
+        Type=notify
+        ExecStart=/usr/bin/dockerd --host=tcp://127.0.0.1:2375 --host=unix:///var/run/docker.sock --storage-driver=overlay2 --tlsverify --tlscacert=${local_git_repo}/.certs/cacert.pem --tlskey=${local_git_repo}/.certs/server.key --tlscert=${local_git_repo}/.certs/server.cert
+        ExecReload=/bin/kill -s HUP $MAINPID
+        TimeoutSec=0
+        RestartSec=2
+        Restart=always
+        LimitNOFILE=infinity
+        LimitNPROC=infinity
+        LimitCORE=infinity
+        TasksMax=infinity
+        Delegate=yes
+        KillMode=process
+        
+        [Install]
+        WantedBy=multi-user.target
+storage:
+  files:
+    - path: /etc/caddy/Caddyfile
+      filesystem: root
+      mode: 0644
+      contents:
+        inline: |
+          ${domain} {
+            proxy  / http://localhost:10000 {
+              transparent
+              websocket
+            }
+            root   /var/www/${domain}
+            log    stdout
+            errors stdout
+          }
+    - path: /opt/bin/setup-contained.af.sh
+      filesystem: root
+      mode: 0755
+      contents:
+        inline: |
+          #!/bin/bash
+          
+          sudo -u core /bin/bash -c " \
+            mkdir --parents /home/core/go/src/github.com/kinvolk; \
+            cd /home/core/go/src/github.com/kinvolk; \
+            git clone https://github.com/kinvolk/contained.af; \
+            cd contained.af; \
+            git checkout dongsu/kinvolk-demo-flatcar; \
+            mkdir --parents .certs; \
+            ./config/setup_certs.sh; \
+          "
+    - path: /opt/bin/run-contained.af.sh
+      filesystem: root
+      mode: 0755
+      contents:
+        inline: |
+          #!/bin/bash
+          
+          sudo -u core /bin/bash -c " \
+            cd ${local_git_repo}; \
+            ./setup-nodejs-dev.sh; \
+            ./run-contained.sh; \
+          "
