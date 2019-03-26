@@ -1,5 +1,34 @@
 #cloud-config
 write_files:
+  - path: /etc/caddy/Caddyfile
+    permissions: '0644'
+    content: |
+      ${domain} {
+        proxy  / http://localhost:10000
+        root   /var/www/${domain}
+        log    stdout
+        errors stdout
+      }
+  - path: /etc/systemd/system/caddy.service
+    content: |
+      [Unit]
+      After=network-online.target
+      Wants=network-online.target
+      
+      [Service]
+      User=www-data
+      Group=www-data
+      Environment=CADDYPATH=/var/www/${domain}
+      RestartSec=10
+      Restart=always
+      LimitNOFILE=32768
+      LimitNPROC=512
+      TimeoutStartSec=300
+      ExecStart=/usr/local/bin/caddy --conf=/etc/caddy/Caddyfile
+      ExecReload=/bin/kill -USR1 $MAINPID
+      
+      [Install]
+      WantedBy=multi-user.target
   - path: /etc/systemd/system/docker.service
     content: |
       [Unit]
@@ -70,3 +99,11 @@ runcmd:
   - systemctl enable docker.service
   - systemctl start contained.service
   - systemctl enable contained.service
+  - curl https://getcaddy.com | bash -s personal
+  - chown root:root /usr/local/bin/caddy
+  - chmod 755 /usr/local/bin/caddy
+  - setcap 'cap_net_bind_service=+ep' /usr/local/bin/caddy
+  - mkdir -p /var/www
+  - chown -R www-data:www-data /var/www
+  - systemctl enable caddy.service
+  - systemctl start caddy.service
