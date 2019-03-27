@@ -4,7 +4,10 @@ write_files:
     permissions: '0644'
     content: |
       ${domain} {
-        proxy  / http://localhost:10000
+        proxy  / http://localhost:10000 {
+          transparent
+          websocket
+        }
         root   /var/www/${domain}
         log    stdout
         errors stdout
