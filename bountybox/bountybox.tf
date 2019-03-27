@@ -36,7 +36,11 @@ data "aws_ami" "ubuntu" {
 }
 
 data "template_file" "systemd" {
-  template = "${file("${var.distro}/cloudinit.yaml")}"
+  template = "${file("${var.distro}/cloudinit.yaml.tmpl")}"
+
+  vars = {
+    domain = "${var.instance_name}.${var.dns_zone}"
+  }
 }
 
 data "template_cloudinit_config" "config" {
