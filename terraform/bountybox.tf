@@ -50,10 +50,14 @@ data "template_cloudinit_config" "config" {
   }
 }
 
+resource "aws_key_pair" "ssh_public_key" {
+  public_key = "${var.ssh_public_key}"
+}
+
 resource "aws_instance" "bountybox" {
   ami           = "${var.distro == "flatcar" ? data.aws_ami.flatcar.id : data.aws_ami.ubuntu.id}"
   instance_type = "${var.instance_type}"
-  key_name      = "${var.key_pair_name}"
+  key_name      = "${aws_key_pair.ssh_public_key.key_name}"
 
   vpc_security_group_ids = ["${aws_security_group.bountybox.id}"]
   subnet_id = "${aws_subnet.bountybox.id}"
