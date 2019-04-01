@@ -8,7 +8,7 @@ Manual preparation:
 Prepare `terraform.tfvars` from its template file.
 
 ```
-cd bountybox
+cd terraform
 cp terraform.tfvars.tmpl terraform.tfvars
 ```
 
