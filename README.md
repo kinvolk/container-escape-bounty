@@ -13,6 +13,9 @@ It uses a modified version of contained.af that can be found here: TODO
   Provide them [through environment variables or a shared credentials file](https://www.terraform.io/docs/providers/aws/#authentication)
   to Terraform.
 
+Note: we recommend to use a separate AWS (sub)organization and account
+that is not used for anything else.
+
 ### Terraform
 
 Terraform is used to provision virtual machines.
