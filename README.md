@@ -38,6 +38,18 @@ terraform init
 terraform apply
 ```
 
+To (re)run the provisioning scripts after a the virtual machines was
+started, for example during development:
+
+```
+terraform taint null_resource.provision
+terraform apply -target null_resource.provision
+```
+
+Note: [terraform doesn't detect changes for copied directories](https://github.com/hashicorp/terraform/issues/6065)
+i.e. you need to delete the `~/provisioning` directory on the node
+first if you want terraform to resync it.
+
 To clean up the AWS resources:
 
 ```
