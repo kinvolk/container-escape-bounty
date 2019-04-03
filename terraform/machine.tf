@@ -1,7 +1,3 @@
-provider "aws" {
-  region = "${var.aws_region}"
-}
-
 # Flatcar Linux - https://www.flatcar-linux.org/
 data "aws_ami" "flatcar" {
   most_recent = true
@@ -35,30 +31,17 @@ data "aws_ami" "ubuntu" {
   owners = ["099720109477"] # Canonical
 }
 
-data "template_file" "systemd" {
-  template = "${file("${var.distro}/cloudinit.yaml.tmpl")}"
-
-  vars = {
-    domain = "${var.instance_name}.${var.dns_zone}"
-  }
-}
-
-data "template_cloudinit_config" "config" {
-  part {
-    content_type = "text/cloud-config"
-    content      = "${data.template_file.systemd.rendered}"
-  }
+resource "aws_key_pair" "ssh_public_key" {
+  public_key = "${var.ssh_public_key}"
 }
 
 resource "aws_instance" "bountybox" {
   ami           = "${var.distro == "flatcar" ? data.aws_ami.flatcar.id : data.aws_ami.ubuntu.id}"
   instance_type = "${var.instance_type}"
-  key_name      = "${var.key_pair_name}"
+  key_name      = "${aws_key_pair.ssh_public_key.key_name}"
 
   vpc_security_group_ids = ["${aws_security_group.bountybox.id}"]
   subnet_id = "${aws_subnet.bountybox.id}"
-
-  user_data = "${data.template_cloudinit_config.config.rendered}"
 
   tags = {
     Name = "${var.instance_name}"
@@ -95,16 +78,6 @@ resource "aws_security_group_rule" "allow_https" {
   type        = "ingress"
   from_port   = 443
   to_port     = 443
-  protocol    = "tcp"
-  cidr_blocks = ["0.0.0.0/0"]
-
-  security_group_id = "${aws_security_group.bountybox.id}"
-}
-
-resource "aws_security_group_rule" "allow_container" {
-  type        = "ingress"
-  from_port   = 10000
-  to_port     = 10000
   protocol    = "tcp"
   cidr_blocks = ["0.0.0.0/0"]
 
