@@ -1,5 +1,7 @@
 # Container Escape Bounty CTF
 
+Status: alpha, work in progress
+
 This repository contains config to deploy and install virtual machines for a
 "Container Escape Bounty" Capture the Flag (CTF) game based on [contained.af](https://github.com/genuinetools/contained.af).
 
