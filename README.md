@@ -30,3 +30,8 @@ To clean up the AWS resources:
 ```
 terraform destroy
 ```
+
+## Slack channel
+
+Join the [CNCF slack](https://slack.cncf.io/) and the [#containerescape
+channel](https://cloud-native.slack.com/messages/containerescape/).
