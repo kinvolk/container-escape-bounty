@@ -44,10 +44,3 @@ variable "instance_type" {
   description = "Type of the AWS instance (e.g. t2.micro, t3.small)"
   default     = "t2.micro"
 }
-
-variable "distro_user_name" {
-  default = {
-    "flatcar" = "core"
-    "ubuntu"  = "ubuntu"
-  }
-}
