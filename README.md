@@ -56,6 +56,35 @@ To clean up the AWS resources:
 terraform destroy
 ```
 
+#### As a terraform child module
+
+The `terraform` folder can be used as a [terraform child module](https://www.terraform.io/docs/configuration/modules.html#calling-a-child-module)
+alternatively.
+
+Example:
+
+```
+locals {
+	ssh_public_key = "ssh-rsa AAAA..."
+
+	dns_zone = "contained.example.com"
+	dns_zone_id = "ZZZZ"
+}
+
+module "demo" {
+	source = "./terraform"
+
+	instance_name = "demo"
+
+	distro = "flatcar"
+
+	ssh_public_key = "${local.ssh_public_key}"
+
+	dns_zone = "${local.dns_zone}"
+	dns_zone_id = "${local.dns_zone_id}"
+}
+```
+
 ## Usage
 
 Go to `https://<instance_name>.<dns_zone>` to access the contained.af web interface.
