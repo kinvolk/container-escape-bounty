@@ -42,7 +42,7 @@ common::contained.af_run() {
   sudo docker run -d \
     --name contained.af \
     --network host \
-    quay.io/schu/contained.af \
+    quay.io/kinvolk/contained.af:container-escape-bounty-latest \
     -d
 }
 
