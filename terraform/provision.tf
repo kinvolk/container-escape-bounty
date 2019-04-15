@@ -14,4 +14,8 @@ resource "null_resource" "provision" {
   provisioner "remote-exec" {
     inline = "domain='${local.domain}' bash ~/provisioning/${var.distro}.bash"
   }
+
+  provisioner "remote-exec" {
+    inline = "sudo sh -c \"echo ${random_string.flag_in_var_tmp.result} > /var/tmp/FLAG && chmod 0600 /var/tmp/FLAG\""
+  }
 }
