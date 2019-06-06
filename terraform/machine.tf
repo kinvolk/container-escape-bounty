@@ -84,6 +84,17 @@ resource "aws_security_group_rule" "allow_https" {
   security_group_id = "${aws_security_group.bountybox.id}"
 }
 
+resource "aws_security_group_rule" "allow_8080" {
+  type        = "ingress"
+  from_port   = 8080
+  to_port     = 8080
+  protocol    = "tcp"
+  cidr_blocks = ["0.0.0.0/0"]
+
+  security_group_id = "${aws_security_group.bountybox.id}"
+}
+
+
 resource "aws_security_group_rule" "allow_custom_container" {
   type        = "ingress"
   from_port   = 36100
