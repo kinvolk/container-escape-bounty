@@ -21,6 +21,7 @@ The workflows described below are not all implemented in the first phase of the 
 
 - SR goes to the bounty box web portal
 - SR chooses parameters for the container to be started from the bounty box web portal:
+  - [container profile](profiles.md)
   - container image
   - environment variables
   - command
