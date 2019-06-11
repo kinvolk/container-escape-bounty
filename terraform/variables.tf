@@ -44,3 +44,9 @@ variable "instance_type" {
   description = "Type of the AWS instance (e.g. t2.micro, t3.small)"
   default     = "t2.micro"
 }
+
+variable "contained_af_image" {
+  type        = "string"
+  description = "Image to use for contained.af"
+  default     = "quay.io/kinvolk/contained.af:container-escape-bounty-latest"
+}

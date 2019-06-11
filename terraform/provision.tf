@@ -12,7 +12,7 @@ resource "null_resource" "provision" {
   }
 
   provisioner "remote-exec" {
-    inline = "domain='${local.domain}' bash ~/provisioning/${var.distro}.bash"
+    inline = "domain='${local.domain}' contained_af_image=${var.contained_af_image} bash ~/provisioning/${var.distro}.bash"
   }
 
   provisioner "remote-exec" {
