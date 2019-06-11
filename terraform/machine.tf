@@ -31,17 +31,41 @@ data "aws_ami" "ubuntu" {
   owners = ["099720109477"] # Canonical
 }
 
+data "aws_ami" "fedora" {
+  most_recent = true
+
+  filter {
+    name   = "name"
+    values = ["Fedora-Cloud-Base-*.x86_64-hvm-*"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+
+  owners = ["125523088429"]
+}
+
 resource "aws_key_pair" "ssh_public_key" {
   public_key = "${var.ssh_public_key}"
 }
 
+locals {
+  machine_id = {
+    flatcar = "${data.aws_ami.flatcar.id}"
+    ubuntu  = "${data.aws_ami.ubuntu.id}"
+    fedora  = "${data.aws_ami.fedora.id}"
+  }
+}
+
 resource "aws_instance" "bountybox" {
-  ami           = "${var.distro == "flatcar" ? data.aws_ami.flatcar.id : data.aws_ami.ubuntu.id}"
+  ami           = "${local.machine_id[var.distro]}"
   instance_type = "${var.instance_type}"
   key_name      = "${aws_key_pair.ssh_public_key.key_name}"
 
   vpc_security_group_ids = ["${aws_security_group.bountybox.id}"]
-  subnet_id = "${aws_subnet.bountybox.id}"
+  subnet_id              = "${aws_subnet.bountybox.id}"
 
   tags = {
     Name = "${var.instance_name}"
@@ -109,5 +133,5 @@ resource "aws_route53_record" "bountybox" {
   name    = "${var.instance_name}.${var.dns_zone}"
   type    = "A"
   ttl     = "300"
-  records  = ["${aws_eip.ip-bountybox.public_ip}"]
+  records = ["${aws_eip.ip-bountybox.public_ip}"]
 }

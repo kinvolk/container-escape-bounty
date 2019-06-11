@@ -35,7 +35,7 @@ variable "aws_region" {
 
 variable "distro" {
   type        = "string"
-  description = "Linux Distro to be installed (ubuntu or flatcar)"
+  description = "Linux Distro to be installed (ubuntu, flatcar or fedora)"
   default     = "ubuntu"
 }
 

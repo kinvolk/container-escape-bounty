@@ -4,5 +4,6 @@ locals {
   distro_user_name = {
     "flatcar" = "core"
     "ubuntu"  = "ubuntu"
+    "fedora"  = "fedora"
   }
 }
