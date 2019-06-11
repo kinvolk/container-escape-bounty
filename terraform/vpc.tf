@@ -11,7 +11,7 @@ resource "aws_vpc" "bountybox" {
 }
 
 resource "aws_subnet" "bountybox" {
-  vpc_id      = "${aws_vpc.bountybox.id}"
+  vpc_id     = "${aws_vpc.bountybox.id}"
   cidr_block = "10.0.0.0/24"
 
   tags = {

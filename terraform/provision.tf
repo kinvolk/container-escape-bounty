@@ -1,13 +1,13 @@
 resource "null_resource" "provision" {
   connection {
-    type = "ssh"
-    host = "${aws_eip.ip-bountybox.public_ip}"
-    user = "${lookup(local.distro_user_name, var.distro)}"
+    type    = "ssh"
+    host    = "${aws_eip.ip-bountybox.public_ip}"
+    user    = "${lookup(local.distro_user_name, var.distro)}"
     timeout = "3m"
   }
 
   provisioner "file" {
-    source = "${path.module}/provisioning"
+    source      = "${path.module}/provisioning"
     destination = "~/"
   }
 
