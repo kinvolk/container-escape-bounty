@@ -29,6 +29,13 @@ EOF
 }
 
 common::caddy_run() {
+  # We have hardcoded the container names, and it is highly possible that
+  # starting container with same name will fail if we already have a
+  # running/stopped container. To avoid this script from erroring out on that
+  # and making this script idempotent remove the container before starting it
+  # with same name.
+  sudo docker rm -f caddy || true
+
   sudo mkdir -p /var/lib/caddy/dotcaddy
   sudo docker run -d \
     --name caddy \
@@ -39,6 +46,13 @@ common::caddy_run() {
 }
 
 common::contained.af_run() {
+  # We have hardcoded the container names, and it is highly possible that
+  # starting container with same name will fail if we already have a
+  # running/stopped container. To avoid this script from erroring out on that
+  # and making this script idempotent remove the container before starting it
+  # with same name.
+  sudo docker rm -f contained.af || true
+
   sudo docker run -d \
     --name contained.af \
     --network host \
