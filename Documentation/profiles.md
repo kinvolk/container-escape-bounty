@@ -53,7 +53,31 @@ TODO
 
 ### Docker with User Namespaces
 
-TODO
+This profile allows the user to start a container with its own user namespace.
+
+Differences from the default docker profile:
+
+* The processes in the container run as root of the user namespace of containers.
+
+* User mapping is done in `/proc/self/uid_map` as following:
+
+```
+0     100000      65536
+```
+
+* The following kinds of namespaces are owned by the user namespace of the container:
+
+  - ipc
+  - mnt
+  - net
+  - pid
+  - uts
+
+* The following kinds of namespaces are owned by the root user namespace:
+
+  - user
+  - cgroup
+
 
 ### Without LSM
 
