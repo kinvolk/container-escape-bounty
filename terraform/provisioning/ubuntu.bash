@@ -122,3 +122,16 @@ install_docker_userns
 common::caddy_write_config "${domain:?}"
 common::caddy_run
 common::contained.af_run
+
+install_lxd() {
+  sudo service apparmor stop
+  sudo service apparmor teardown
+  sudo snap install lxd
+  sudo lxd init --auto
+
+  sudo snap install lxd-demo-server
+  sudo snap connect lxd-demo-server:lxd lxd:lxd
+  sudo lxd-demo-server.configure
+}
+
+install_lxd
