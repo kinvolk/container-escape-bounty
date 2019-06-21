@@ -7,8 +7,17 @@ resource "null_resource" "provision" {
   }
 
   provisioner "file" {
+    source      = "${path.module}/certs-config"
+    destination = "~/"
+  }
+
+  provisioner "file" {
     source      = "${path.module}/provisioning"
     destination = "~/"
+  }
+
+  provisioner "remote-exec" {
+    inline = "sh ~/certs-config/setup_certs.sh"
   }
 
   provisioner "remote-exec" {

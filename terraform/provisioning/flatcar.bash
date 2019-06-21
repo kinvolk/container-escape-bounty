@@ -47,7 +47,16 @@ Environment=DOCKER_SELINUX=--selinux-enabled=true
 # the default is not to use systemd for cgroups because the delegate issues still
 # exists and systemd currently does not support the cgroup feature set required
 # for containers run by docker
-ExecStart=/usr/bin/env PATH=\${TORCX_BINDIR}:${PATH} \${TORCX_BINDIR}/dockerd --host=fd:// --host=tcp://127.0.0.1:2376 --containerd=/var/run/docker/libcontainerd/docker-containerd.sock --userns-remap=default --pidfile /var/run/docker-userns.pid \$DOCKER_SELINUX \$DOCKER_OPTS \$DOCKER_CGROUPS \$DOCKER_OPT_BIP \$DOCKER_OPT_MTU \$DOCKER_OPT_IPMASQ
+ExecStart=/usr/bin/env PATH=\${TORCX_BINDIR}:${PATH} \${TORCX_BINDIR}/dockerd \
+        --host=fd:// \
+        --host=tcp://127.0.0.1:2376 \
+        --tlsverify \
+        --tlscacert=/etc/docker/ssl/cacert.pem \
+        --tlskey=/etc/docker/ssl/server.key \
+        --tlscert=/etc/docker/ssl/server.cert \
+        --containerd=/var/run/docker/libcontainerd/docker-containerd.sock \
+        --userns-remap=default \
+        --pidfile /var/run/docker-userns.pid \$DOCKER_SELINUX \$DOCKER_OPTS \$DOCKER_CGROUPS \$DOCKER_OPT_BIP \$DOCKER_OPT_MTU \$DOCKER_OPT_IPMASQ
 ExecReload=/bin/kill -s HUP \$MAINPID
 LimitNOFILE=1048576
 # Having non-zero Limit*s causes performance problems due to accounting overhead
