@@ -18,4 +18,14 @@ resource "null_resource" "provision" {
   provisioner "remote-exec" {
     inline = "sudo sh -c \"echo ${random_string.flag_in_var_tmp.result} > /var/tmp/FLAG && chmod 0600 /var/tmp/FLAG\""
   }
+
+  // /var/tmp/shared is mounted from the hostpath into the containers
+  // spawned by researchers if they select the weak docker profile. We
+  // create the directory so that the mount does not fail.
+  provisioner "remote-exec" {
+    inline = [
+      "sudo mkdir -p /var/tmp/shared",
+      "sudo touch /var/tmp/shared/THIS_IS_NOT_THE_FLAG_YOU_ARE_LOOKING_FOR",
+    ]
+  }
 }
