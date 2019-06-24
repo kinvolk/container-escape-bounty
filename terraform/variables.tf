@@ -48,5 +48,5 @@ variable "instance_type" {
 variable "contained_af_image" {
   type        = "string"
   description = "Image to use for contained.af"
-  default     = "quay.io/kinvolk/contained.af:container-escape-bounty-latest"
+  default     = "quay.io/kinvolk/contained.af:container-escape-bounty"
 }
