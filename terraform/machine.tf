@@ -34,15 +34,8 @@ resource "aws_key_pair" "ssh_public_key" {
   public_key = "${var.ssh_public_key}"
 }
 
-locals {
-  machine_id = {
-    ubuntu = "${data.aws_ami.ubuntu.id}"
-    fedora = "${data.aws_ami.fedora.id}"
-  }
-}
-
-resource "aws_instance" "bountybox" {
-  ami           = "${local.machine_id[var.distro]}"
+resource "aws_instance" "bountybox_apparmor" {
+  ami           = "${data.aws_ami.ubuntu.id}"
   instance_type = "${var.instance_type}"
   key_name      = "${aws_key_pair.ssh_public_key.key_name}"
 
@@ -50,7 +43,20 @@ resource "aws_instance" "bountybox" {
   subnet_id              = "${aws_subnet.bountybox.id}"
 
   tags = {
-    Name = "${var.instance_name}"
+    Name = "${local.apparmor_instance_name}"
+  }
+}
+
+resource "aws_instance" "bountybox_selinux" {
+  ami           = "${data.aws_ami.fedora.id}"
+  instance_type = "${var.instance_type}"
+  key_name      = "${aws_key_pair.ssh_public_key.key_name}"
+
+  vpc_security_group_ids = ["${aws_security_group.bountybox.id}"]
+  subnet_id              = "${aws_subnet.bountybox.id}"
+
+  tags = {
+    Name = "${local.selinux_instance_name}"
   }
 }
 
@@ -110,10 +116,20 @@ resource "aws_security_group_rule" "allow_egress" {
   security_group_id = "${aws_security_group.bountybox.id}"
 }
 
-resource "aws_route53_record" "bountybox" {
+resource "aws_route53_record" "bountybox_apparmor" {
   zone_id = "${var.dns_zone_id}"
-  name    = "${var.instance_name}.${var.dns_zone}"
+  name    = "${local.domain_apparmor}"
   type    = "A"
   ttl     = "300"
-  records = ["${aws_eip.ip-bountybox.public_ip}"]
+
+  records = ["${aws_eip.ip_bountybox_apparmor.public_ip}"]
+}
+
+resource "aws_route53_record" "bountybox_selinux" {
+  zone_id = "${var.dns_zone_id}"
+  name    = "${local.domain_selinux}"
+  type    = "A"
+  ttl     = "300"
+
+  records = ["${aws_eip.ip_bountybox_selinux.public_ip}"]
 }
