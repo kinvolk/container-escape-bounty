@@ -1,20 +1,3 @@
-# Flatcar Linux - https://www.flatcar-linux.org/
-data "aws_ami" "flatcar" {
-  most_recent = true
-
-  filter {
-    name   = "name"
-    values = ["Flatcar-stable-*-hvm"]
-  }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-
-  owners = ["075585003325"]
-}
-
 data "aws_ami" "ubuntu" {
   most_recent = true
 
@@ -53,9 +36,8 @@ resource "aws_key_pair" "ssh_public_key" {
 
 locals {
   machine_id = {
-    flatcar = "${data.aws_ami.flatcar.id}"
-    ubuntu  = "${data.aws_ami.ubuntu.id}"
-    fedora  = "${data.aws_ami.fedora.id}"
+    ubuntu = "${data.aws_ami.ubuntu.id}"
+    fedora = "${data.aws_ami.fedora.id}"
   }
 }
 

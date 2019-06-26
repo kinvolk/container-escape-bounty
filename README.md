@@ -79,7 +79,7 @@ module "demo" {
 
 	instance_name = "demo"
 
-	distro = "flatcar"
+	distro = "fedora"
 
 	ssh_public_key = "${local.ssh_public_key}"
 
