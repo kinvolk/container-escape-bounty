@@ -33,12 +33,6 @@ variable "aws_region" {
   default     = "eu-central-1"
 }
 
-variable "distro" {
-  type        = "string"
-  description = "Linux Distro to be installed (ubuntu or fedora)"
-  default     = "ubuntu"
-}
-
 variable "instance_type" {
   type        = "string"
   description = "Type of the AWS instance (e.g. t2.micro, t3.small)"
