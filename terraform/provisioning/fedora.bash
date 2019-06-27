@@ -21,7 +21,7 @@ install_docker() {
   cat <<EOF | sudo tee /etc/systemd/system/docker.service.d/10-http.conf
 [Service]
 ExecStart=
-ExecStart=/usr/bin/dockerd -H fd:// -H tcp://127.0.0.1:2375 --containerd=/run/containerd/containerd.sock
+ExecStart=/usr/bin/dockerd -H fd:// -H tcp://127.0.0.1:2375 --selinux-enabled --containerd=/run/containerd/containerd.sock
 EOF
   sudo systemctl daemon-reload
   sudo systemctl --now enable docker
@@ -42,7 +42,7 @@ Type=notify
 # the default is not to use systemd for cgroups because the delegate issues still
 # exists and systemd currently does not support the cgroup feature set required
 # for containers run by docker
-ExecStart=/usr/bin/dockerd -H fd:// -H tcp://127.0.0.1:2376 --containerd=/run/containerd/containerd.sock --userns-remap=default --pidfile /var/run/docker-userns.pid
+ExecStart=/usr/bin/dockerd -H fd:// -H tcp://127.0.0.1:2376 --selinux-enabled --containerd=/run/containerd/containerd.sock --userns-remap=default --pidfile /var/run/docker-userns.pid
 ExecReload=/bin/kill -s HUP \$MAINPID
 TimeoutSec=0
 RestartSec=2
