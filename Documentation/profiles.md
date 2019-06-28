@@ -20,12 +20,10 @@ can then start containers under one container profile. The bounty reward could
 be different depending on which container profiles the vulnerability is
 exploitable on.
 
-Note that the container profiles are not implemented yet.
-
 The basic container profiles are the following:
 - *Default Docker*
 - *Weak Docker*
-- *Docker with User Namespaces*
+- *Default/Weak Docker with User Namespaces*
 
 Each basic container profiles have the following variants:
 - *without LSM*
@@ -36,26 +34,40 @@ Each basic container profiles have the following variants:
 
 ### Default Docker
 
-- Namespaces
-  - cgroup
-  - ipc
-  - mnt
-  - net
-  - pid
-  - user
-  - uts
+The entrypoint of the provided container image is run as user `nobody`.
+As usual, the container processes run in different namespaces as the host processes,
+except for the user namespace.
 
-TODO
+- Namespaces
+  - `cgroup`: new (container cgroup becomes new root cgroup)
+  - `ipc`: new
+  - `mnt` (mounts): new
+  - `net`: new
+  - `pid`: new (mapped to host PIDs)
+  - `user`: of host
+  - `uts` (hostname, …): new
+
+The profile uses the `no-new-privileges` flag to prevent processes from geting
+new privileges when using `fork`, `clone`, or `exec`.
+
+A `seccomp` policy is used to only allow certain syscalls.
+[Here](https://github.com/moby/moby/blob/238f8eaa31aa74be843c81703fabf774863ec30c/profiles/seccomp/default.json)
+is the list of allowed syscalls and allowed syscalls when having a `SYS_…` capability.
 
 ### Weak Docker
 
-TODO
+Same as the default profile, but the entrypoint of the provided container image is run as user `root`.
+The capabilities `NET_ADMIN` and `SYS_PTRACE` are given in addition to the
+[default list](https://docs.docker.com/engine/reference/run/#runtime-privilege-and-linux-capabilities).
+Note that even though `root` is used, any other capabilities such as `SYS_ADMIN` are not given.
 
-### Docker with User Namespaces
+*Shared folder:* The folder `/var/tmp/shared` is shared from the host to the container as a writable bind mount.
 
-This profile allows the user to start a container with its own user namespace.
+### Default/Weak Docker with User Namespaces
 
-Differences from the default docker profile:
+These profiles allow the user to start a container with its own user namespace.
+
+Differences from the default/weak docker profile:
 
 * The processes in the container run as root of the user namespace of containers.
 
