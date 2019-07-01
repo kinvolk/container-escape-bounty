@@ -121,4 +121,4 @@ install_docker_userns
 
 common::caddy_write_config "${domain:?}"
 common::caddy_run
-common::contained.af_run
+common::contained.af_run ubuntu
