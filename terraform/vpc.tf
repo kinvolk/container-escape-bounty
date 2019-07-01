@@ -19,12 +19,21 @@ resource "aws_subnet" "bountybox" {
   }
 }
 
-resource "aws_eip" "ip-bountybox" {
-  instance = "${aws_instance.bountybox.id}"
+resource "aws_eip" "ip_bountybox_apparmor" {
+  instance = "${aws_instance.bountybox_apparmor.id}"
   vpc      = true
 
   tags = {
-    Name = "${var.instance_name}"
+    Name = "${local.apparmor_instance_name}"
+  }
+}
+
+resource "aws_eip" "ip_bountybox_selinux" {
+  instance = "${aws_instance.bountybox_selinux.id}"
+  vpc      = true
+
+  tags = {
+    Name = "${local.selinux_instance_name}"
   }
 }
 

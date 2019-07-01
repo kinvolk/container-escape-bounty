@@ -1,8 +1,10 @@
 resource "null_resource" "provision" {
+  count = "${length(local.machine_users)}"
+
   connection {
     type    = "ssh"
-    host    = "${aws_eip.ip-bountybox.public_ip}"
-    user    = "${lookup(local.distro_user_name, var.distro)}"
+    host    = "${local.machine_ips[count.index]}"
+    user    = "${local.machine_users[count.index]}"
     timeout = "3m"
   }
 
@@ -12,7 +14,7 @@ resource "null_resource" "provision" {
   }
 
   provisioner "remote-exec" {
-    inline = "domain='${local.domain}' contained_af_image=${var.contained_af_image} bash ~/provisioning/${var.distro}.bash"
+    inline = "domain='${local.machine_domains[count.index]}' contained_af_image=${var.contained_af_image} bash ~/provisioning/${local.machine_users[count.index]}.bash"
   }
 
   provisioner "remote-exec" {

@@ -79,8 +79,6 @@ module "demo" {
 
 	instance_name = "demo"
 
-	distro = "flatcar"
-
 	ssh_public_key = "${local.ssh_public_key}"
 
 	dns_zone = "${local.dns_zone}"
@@ -90,7 +88,10 @@ module "demo" {
 
 ## Usage
 
-Go to `https://<instance_name>.<dns_zone>` to access the contained.af web interface.
+To access the contained.af web interface visit following URLs respectively.
+
+- With support of AppArmor `https://<instance_name>.apparmor.<dns_zone>`
+- With support of SELinux `https://<instance_name>.selinux.<dns_zone>`
 
 ## Slack channel
 
