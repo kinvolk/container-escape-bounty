@@ -46,6 +46,7 @@ common::caddy_run() {
 }
 
 common::contained.af_run() {
+  osname="${1}"
   # We have hardcoded the container names, and it is highly possible that
   # starting container with same name will fail if we already have a
   # running/stopped container. To avoid this script from erroring out on that
@@ -57,7 +58,7 @@ common::contained.af_run() {
     --name contained.af \
     --network host \
     ${contained_af_image} \
-    -d
+    -d -os="${osname}"
 }
 
 if [[ $EUID -eq 0 ]]; then
