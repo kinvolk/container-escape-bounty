@@ -44,3 +44,9 @@ variable "contained_af_image" {
   description = "Image to use for contained.af"
   default     = "quay.io/kinvolk/contained.af:container-escape-bounty"
 }
+
+variable "username" {
+  type        = "string"
+  description = "Username for the HTTP basic authentification"
+  default     = "user"
+}

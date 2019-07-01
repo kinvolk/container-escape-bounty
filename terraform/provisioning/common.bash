@@ -13,6 +13,8 @@ common::exit_error() {
 
 common::caddy_write_config() {
   local -r domain="${1}"
+  local -r username="${2}"
+  local -r password="${3}"
   sudo mkdir -p /etc/caddy
   sudo mkdir -p /var/www
   cat <<EOF | sudo tee /etc/caddy/Caddyfile
@@ -24,6 +26,7 @@ ${domain} {
   root   /var/www/
   log    stdout
   errors stdout
+  basicauth / "${username}" "${password}"
 }
 EOF
 }
