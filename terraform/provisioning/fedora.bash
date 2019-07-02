@@ -14,7 +14,7 @@ install_docker() {
   sudo dnf config-manager \
   --add-repo \
   https://download.docker.com/linux/fedora/docker-ce.repo
-  sudo dnf install -y docker-ce docker-ce-cli containerd.io
+  sudo dnf install -y --releasever=29 docker-ce docker-ce-cli containerd.io
 
   # By default, Docker doesn't listen on 127.0.0.1:2375
   sudo mkdir -p /etc/systemd/system/docker.service.d
