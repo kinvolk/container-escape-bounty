@@ -93,20 +93,31 @@ Differences from the default/weak docker profile:
 
 ### Without LSM
 
-TODO
+No LSM is used when SELinux is disabled for a container on a Fedora VM,
+or AppArmor is disabled for a container on a Ubuntu VM.
 
 ### With SELinux
 
-TODO
+The standard SELinux policy of Fedora is used, coming from
+the package [`container-selinux`](https://github.com/containers/container-selinux).
+This specially impacts the weak docker profile which has
+`/var/tmp/shared/` as shared folder but cannot access it anymore
+with SELinux due to different labels.
+The shared folder content is not relabeled with SELinux labels that the container is
+allowed to access, thus, access is denied.
+Read more about it in general [here](https://www.projectatomic.io/docs/docker-and-selinux/).
 
 ### With AppArmor
 
-TODO
+The default docker apparmor [profile](https://github.com/docker/docker-ce/blob/master/components/engine/profiles/apparmor/template.go)
+for containers is used.
+(No other custom profile is applied yet but read the [docker documentation](https://docs.docker.com/engine/security/apparmor/)
+for an idea of what could be specified in addition.)
 
 ## Examples of vulnerabilities and relation with container profiles
 
 The purpose of giving a few examples is to discuss whether the current
-container profiles are relevent: if the vulnerabilities above were not already
+container profiles are relevant: if the vulnerabilities above were not already
 discovered, would they be exploitable in the test environments?
 
 ### CVE-2015-3630: Read/write proc paths & CIFS
