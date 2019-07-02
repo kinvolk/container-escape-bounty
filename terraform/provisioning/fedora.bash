@@ -99,6 +99,6 @@ EOF
 install_docker
 install_docker_userns
 
-common::caddy_write_config "${domain:?}"
+common::caddy_write_config "${domain:?}" "${username:?}" "${password:?}"
 common::caddy_run
 common::contained.af_run fedora

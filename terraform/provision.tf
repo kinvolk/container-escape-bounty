@@ -14,7 +14,7 @@ resource "null_resource" "provision" {
   }
 
   provisioner "remote-exec" {
-    inline = "domain='${local.machine_domains[count.index]}' contained_af_image=${var.contained_af_image} bash ~/provisioning/${local.machine_users[count.index]}.bash"
+    inline = "domain='${local.machine_domains[count.index]}' username='${var.username}' password='${random_string.password.result}' contained_af_image=${var.contained_af_image} bash ~/provisioning/${local.machine_users[count.index]}.bash"
   }
 
   provisioner "remote-exec" {
