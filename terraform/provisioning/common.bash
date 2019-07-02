@@ -45,7 +45,7 @@ common::caddy_run() {
     --network host \
     --volume=/etc/caddy/Caddyfile:/etc/Caddyfile:ro \
     --volume=/var/lib/caddy/dotcaddy:/root/.caddy:rw,Z \
-    quay.io/schu/caddy:0.11.5
+    quay.io/kinvolk/caddy:1.0.0
 }
 
 common::contained.af_run() {
