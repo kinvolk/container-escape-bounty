@@ -14,7 +14,7 @@ https://github.com/kinvolk/contained.af/tree/container-escape-bounty
 
 * AWS IAM credentials for programmatic access to EC2 and Route53.
   Provide them [through environment variables or a shared credentials file](https://www.terraform.io/docs/providers/aws/#authentication)
-  to Terraform.
+  to Terraform (e.g., `AWS_ACCESS_KEY_ID=… AWS_SECRET_ACCESS_KEY=… AWS_DEFAULT_REGION=… terraform …`).
 
 Note: we recommend to use a separate AWS (sub)organization and account
 that is not used for anything else.
@@ -34,7 +34,7 @@ Edit `terraform.tfvars` and add your variables. Take a look at `variables.tf`
 to learn about optional variables that you might want to set (for example
 the name of the VM).
 
-Run terraform to create AWS instances:
+Run terraform to create AWS instances (make sure to use the AWS IAM credentials as env vars or from the shared credentials file):
 
 ```
 terraform init
@@ -93,6 +93,19 @@ To access the contained.af web interface visit following URLs respectively.
 
 - With support of AppArmor `https://<instance_name>.apparmor.<dns_zone>`
 - With support of SELinux `https://<instance_name>.selinux.<dns_zone>`
+
+They are printed after `terraform apply`.
+The HTTP basic auth password and the secret flag content is not printed
+and can be found in `terraform.tfstate`.
+
+Please follow the [workflow](Documentation/workflow.md)
+and read more about the [profiles](Documentation/profiles.md).
+
+When the above URLs cannot be accessed after creation, you may have been
+rate-limited by [Let's Encrypt](https://letsencrypt.org/) which is used
+to generate TLS certificates.
+Please run `terraform destroy` and change the `instance_name` before you
+run `terraform apply` to create the VMs with new domains.
 
 ## Slack channel
 
