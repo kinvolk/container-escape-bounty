@@ -45,7 +45,8 @@ To (re)run the provisioning scripts after a the virtual machines was
 started, for example during development:
 
 ```
-terraform taint null_resource.provision
+terraform taint null_resource.provision.0
+terraform taint null_resource.provision.1
 terraform apply -target null_resource.provision
 ```
 
