@@ -28,7 +28,12 @@ The basic container profiles are the following:
 Each basic container profiles have the following variants:
 - *without LSM*
 - *with SELinux*
-- *with Apparmor*
+- *with AppArmor*
+
+On the Fedora 30 VM the variants with SELinux and without are available,
+AppArmor is not present.
+On the Ubuntu 10.04 VM the variants with AppArmor and without are available,
+and SELinux is not present.
 
 ## Description of each container profile
 
