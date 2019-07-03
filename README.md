@@ -1,12 +1,22 @@
 # Container Escape Bounty CTF
 
-Status: alpha, work in progress
+Status: beta, please use this and give feedback
 
 This repository contains config to deploy and install virtual machines for a
 "Container Escape Bounty" Capture the Flag (CTF) game based on [contained.af](https://github.com/genuinetools/contained.af).
 
 It uses a modified version of contained.af that can be found here:
 https://github.com/kinvolk/contained.af/tree/container-escape-bounty
+
+This will deploy two VMs on AWS: one Fedora VM for SELinux and one Ubuntu VM for AppArmor.
+The web interface allows a security researcher to freely spawn containers
+with access through a terminal in a browser tab.
+
+Both VMs have a secret flag file on the host filesystem that the researcher
+should read by breaking out of the container.
+Read the workflow in detail [here](Documentation/workflow.md).
+
+The containers can be run with different [security profiles](Documentation/profiles.md).
 
 ## Setup
 
