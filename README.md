@@ -99,7 +99,9 @@ The HTTP basic auth password and the secret flag content is not printed
 and can be found in `terraform.tfstate`.
 
 Please follow the [workflow](Documentation/workflow.md)
-and read more about the [profiles](Documentation/profiles.md).
+and read more about the [profiles](Documentation/profiles.md). To know more
+about how the various pieces come together see
+[architecture doc](Documentation/architecture.md).
 
 When the above URLs cannot be accessed after creation, you may have been
 rate-limited by [Let's Encrypt](https://letsencrypt.org/) which is used
